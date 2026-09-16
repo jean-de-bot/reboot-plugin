@@ -1,11 +1,11 @@
 ---
-title: MCP Chat App–Specific Gotchas
+title: MCP UI–Specific Gotchas
 impact: CRITICAL
-impactDescription: The trip list specific to the MCP-Chat-App layer. Every entry is a real failure mode the chat-app codegen, runtime, or build surfaces — most are caught at startup or at codegen rather than at write time, so they look like runtime errors but are static schema problems.
+impactDescription: The trip list specific to the MCP UI layer. Every entry is a real failure mode the MCP UI codegen, runtime, or build surfaces — most are caught at startup or at codegen rather than at write time, so they look like runtime errors but are static schema problems.
 tags: gotchas, traps, errors, mcp, ui, factory, workflow, ref, schedule, optional, react, vite, snake-camel
 ---
 
-## MCP Chat App–Specific Gotchas
+## MCP UI–Specific Gotchas
 
 For the rest of the trip-list — `.rbtrc` line-based, no `__init__.py`
 in `api/`, pydantic Field zero-default rule, `self.ref().state_id`
@@ -14,7 +14,7 @@ paths, `Service.create(context, id)` semantics, register-all-Servicers
 — see `python/references/patterns-common-gotchas.md` and
 the per-topic references.
 
-The list below is what's specific to the MCP-Chat-App layer:
+The list below is what's specific to the MCP UI layer:
 
 1. **React bindings use camelCase.** Python `from_index` becomes
    TypeScript `fromIndex`; same for every snake_case field name.
@@ -167,7 +167,7 @@ The list below is what's specific to the MCP-Chat-App layer:
     to emit a flat `dist/<name>.html`; that breaks discovery.
 
 20. **LLM / model API calls go in a `Workflow`, never a
-    `Transaction`.** Chat apps routinely call a model (to summarize,
+    `Transaction`.** MCP UIs routinely call a model (to summarize,
     rank, classify, generate). Reboot **retries transactions**, so a
     model call inside one is billed multiple times for a single
     logical request — and a transaction has no memoization to prevent

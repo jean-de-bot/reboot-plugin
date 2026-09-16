@@ -21,15 +21,15 @@ the backend allows that via `OAuth(allowed_origins=[...])`.
 
 > This skill **deploys** an app; it does not build or modify one
 > beyond production configuration. To build, see the
-> [chat-app skill](../chat-app/SKILL.md) and the
+> [`mcp-ui` skill](../mcp-ui/SKILL.md) and the
 > [web-app skill](../web-app/SKILL.md); to run locally, see the
 > [run skill](../run/SKILL.md).
 
 ## When to Use
 
-- A finished Web App (or the web surface of a dual-surface app)
+- A finished Web App (or the web frontend of a dual-frontend app)
   should go live at a real URL on the user's domain.
-- A Chat App with **no** web surface should go to production: only
+- An MCP UI with **no** web frontend should go to production: only
   the backend deploy applies — do Step 2 and stop. MCP UIs ship
   inside the backend image and are served by the backend itself;
   there is nothing to host externally.
@@ -64,13 +64,13 @@ Production readiness checks that commonly bite at this point:
 
 - **A real OAuth provider.** `Development()` is dev-only; the
   `prod=` provider must be set
-  (`chat-app/references/auth-oauth-providers.md` has the
+  (`mcp-ui/references/auth-oauth-providers.md` has the
   per-provider details, including registering the backend's
   `/__/oauth/callback` redirect URI with the IdP).
 - **Authorizers everywhere.** Every externally reachable method
   needs an authorizer — calls without one are denied in
   production (`python/references/servicer-authorizer.md`).
-- **Dual-surface apps:** the Docker image must still run the MCP
+- **Dual-frontend apps:** the Docker image must still run the MCP
   UI builds so `dist/mcp/<name>/` is in the image — the backend
   serves those. The **web** SPA does _not_ need to be in the
   image; it is going to the static host instead.
@@ -120,7 +120,7 @@ First detect the frontend layout, the same way the
 - **Standalone Web App layout** — a single SPA with a stock Vite
   config (entry `index.html` at the top of the SPA directory,
   e.g. `web/`). Assets are built with Vite's default `base: "/"`.
-- **Dual-surface layout** — a `frontend/` directory whose
+- **Dual-frontend layout** — a `frontend/` directory whose
   `vite.config.ts` builds `RBT_BUILD_TARGET=mcp:<name>` targets
   and an `RBT_BUILD_TARGET=web` target into `dist/`. The web
   build there uses `base: "/__/frontend/web/"` (asset URLs carry
@@ -148,7 +148,7 @@ Then:
    ```
 
    (the standard SPA fallback, so a hard load of `/some/route`
-   serves the app instead of a 404). For the dual-surface layout,
+   serves the app instead of a 404). For the dual-frontend layout,
    one extra line **first**, mapping the `/__/frontend/web/`
    asset prefix baked into that layout's build back onto the
    published files:
@@ -161,7 +161,7 @@ Then:
 3. **Check the router's basename.** If the app uses a URL-path
    router (e.g. React Router), its basename must be `"/"` (or
    unset). Never `basename={import.meta.env.BASE_URL}` — on the
-   dual-surface layout that bakes `/__/frontend/web/` into route
+   dual-frontend layout that bakes `/__/frontend/web/` into route
    matching, which runs in the browser where no host rewrite can
    fix it, and every route silently renders nothing on the custom
    domain.
@@ -170,7 +170,7 @@ Then:
    in the frontend directory). The publish directory is the built
    SPA: the directory containing the built `index.html` — e.g.
    `web/dist/` for the standalone layout, `frontend/dist/web/`
-   for the dual-surface layout.
+   for the dual-frontend layout.
 
 ## Step 5 — Publish to Cloudflare Pages and attach the domain
 
@@ -245,7 +245,7 @@ and domain stay put.
 
 - **Blank page, console full of MIME-type or 404 asset errors:**
   the build's asset prefix doesn't match the host — on the
-  dual-surface layout, the `/__/frontend/web/*` rewrite line is
+  dual-frontend layout, the `/__/frontend/web/*` rewrite line is
   missing from `_redirects` (or isn't first).
 - **Routes render nothing on the custom domain but the app loads
   at `/`:** router basename baked from `import.meta.env.BASE_URL`

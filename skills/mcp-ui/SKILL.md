@@ -1,17 +1,17 @@
 ---
-name: chat-app
-description: Build complete Reboot AI Chat Apps (MCP Apps) for ChatGPT, Claude, VSCode, Goose, and other MCP hosts. Layers on top of the python skill for backend mechanics; covers what's specific to MCP Chat Apps — the User-type front door, MCP tool exposure, the UI() method type, and the full React/Vite scaffolding.
+name: mcp-ui
+description: Build complete Reboot MCP UIs for ChatGPT, Claude, VSCode, Goose, and other MCP hosts. Layers on top of the python skill for backend mechanics; covers what's specific to MCP UIs — the User-type front door, MCP tool exposure, the UI() method type, and the full React/Vite scaffolding.
 argument-hint: [<app-description>]
 allowed-tools: Bash, Read, Write, Glob, Grep, Edit
 ---
 
-# chat-app — Build Reboot AI Chat Apps
+# mcp-ui — Build Reboot MCP UIs
 
 > **Version notices:** if `rbt` reports a version mismatch or that a
 > newer Reboot is available, the [upgrade skill](../upgrade/SKILL.md)
 > says how and when to react.
 
-Build complete Reboot AI Chat Apps from a user description.
+Build complete Reboot MCP UIs from a user description.
 
 > **Reads from `python`.** This skill is the MCP-App + React
 > layer on top of the Reboot Python framework. Anything about
@@ -24,13 +24,13 @@ Build complete Reboot AI Chat Apps from a user description.
 > method type, the React/Vite scaffolding, and the cross-cutting
 > rules unique to that layer.
 
-> **Dual-surface apps are supported.** A single app can serve both
+> **Dual-frontend apps are supported.** A single app can serve both
 > an MCP front door _and_ a standalone browser SPA from the same
 > backend; they share `oauth=...`, the same `User` per upstream
 > identity, and the same servicer code. For the standalone SPA
 > piece, also load the
 > [web-app skill](../web-app/SKILL.md). A user who signs in on
-> one surface is signed in on both (cross-surface SSO): the OAuth
+> one frontend is signed in on both (cross-frontend SSO): the OAuth
 > server's `/authorize` short-circuits when the browser already
 > carries a session cookie, and `/callback` sets that cookie
 > on every flow.
@@ -50,10 +50,10 @@ README for the manual install, team auto-enable, and the Codex
 
 ## When to Use
 
-- Building a new Reboot AI Chat App from a description
-- Adding features, state, or UI to an existing Reboot AI Chat App
-- Modifying state model, methods, or React UI in a Reboot AI Chat App
-- Running an existing Reboot AI Chat App — e.g. at the start of a
+- Building a new Reboot MCP UI from a description
+- Adding features, state, or UI to an existing Reboot MCP UI
+- Modifying state model, methods, or React UI in a Reboot MCP UI
+- Running an existing Reboot MCP UI — e.g. at the start of a
   new session. This needs no design or build phase: load the
   [`run` skill](../run/SKILL.md), which detects the app type,
   starts the backend and frontend, and opens the setup wizard (from
@@ -62,7 +62,7 @@ README for the manual install, team auto-enable, and the Codex
 ## Which References to Read, and When
 
 The backend mechanics live in the `python` skill's references; the
-chat-app-specific shape on top of them lives in this skill's own
+MCP-UI-specific shape on top of them lives in this skill's own
 `references/`. Neither set is restated inline below.
 
 Everything you read stays in the conversation and is re-sent on
@@ -71,11 +71,11 @@ it** — not all of them up front — and read each one **once**. The
 groups below are in build order, and each reference appears in
 exactly one of them — the step that needs it.
 
-> **Never read `web-app/references/*` for a chat app.** They cover
+> **Never read `web-app/references/*` for an MCP UI.** They cover
 > the standalone browser SPA — a top-level `web/` Vite shell, the
 > `VITE_REBOOT_URL` backend URL, `<RebootClientProvider>`,
 > browser sign-in buttons — none of which apply to the nested
-> `frontend/mcp/<name>/` bundles an MCP host loads. The chat-app
+> `frontend/mcp/<name>/` bundles an MCP host loads. The MCP UI
 > equivalents are
 > [`references/react-scaffolding.md`](references/react-scaffolding.md)
 > and [`references/react-app-tsx.md`](references/react-app-tsx.md).
@@ -124,7 +124,7 @@ exactly one of them — the step that needs it.
   `User` front door, which otherwise turns into a God actor and
   serializes unrelated writers.
 - [`references/api-method-types.md`](references/api-method-types.md)
-  — the pydantic API file for a chat app: `User`-type front door,
+  — the pydantic API file for an MCP UI: `User`-type front door,
   `mcp=Tool()` / `mcp=None`, `UI()` (including parameterized UI
   props), `factory=True` on `create`, the `Workflow(...)`
   declaration shape. Full Counter API example.
@@ -135,7 +135,7 @@ exactly one of them — the step that needs it.
   `create` (Gotcha #13). The state-inside-state regression and how
   to compose state actors via string ID + `ref(id)`.
 - [`references/gotchas.md`](references/gotchas.md) — the numbered
-  MCP-chat-app trip list (1–19): `mcp=Tool()`/`mcp=None` required,
+  MCP-UI trip list (1–19): `mcp=Tool()`/`mcp=None` required,
   `factory=True` on app-type `create`, `MyType.ref()` not
   `cls.ref()`/`self.ref()` in workflows, `.schedule()` from a
   Transaction, Optional+`default=None` for nested Models, `.read()`
@@ -157,7 +157,7 @@ exactly one of them — the step that needs it.
   `at_most_once`), `context.loop`, inline state writes,
   `until` / `until_changes`, and workflow exit semantics.
 - [`references/servicer-patterns.md`](references/servicer-patterns.md)
-  — the chat-app servicer shapes: `UserServicer` calling
+  — the MCP UI servicer shapes: `UserServicer` calling
   `<X>.create(context)`, a Workflow Servicer with `MyType.ref()`
   (no-arg) magic, inline writers via
   `.per_workflow("alias").write(context, fn)` /
@@ -171,7 +171,7 @@ under Key Framework Concepts):
   `python/references/auth-allow-if.md`,
   `python/references/auth-built-in-predicates.md`,
   `python/references/auth-custom-predicates.md` — the predicate
-  machinery. Chat apps use `oauth=` for identity, so real rules are
+  machinery. MCP UIs use `oauth=` for identity, so real rules are
   viable immediately.
 - `python/references/auth-allow-deny.md` — narrow uses of
   unconditional rules; specifically, when **not** to reach for
@@ -219,7 +219,7 @@ under Key Framework Concepts):
   `App.tsx` itself: what an MCP UI component renders, and the full
   Counter `App.tsx` + `App.module.css` example.
 - `python/references/react-generated-client.md` — what
-  `rbt generate --react=` emits, identically for every surface: the
+  `rbt generate --react=` emits, identically for every frontend: the
   `use<Type>()` overloads, the three-field reader return, why
   mutations resolve to `{ response, aborted }` instead of throwing,
   the typed error classes, and the snake→camel naming rules.
@@ -230,15 +230,21 @@ under Key Framework Concepts):
   `useMcpApp().openLink({ url })` (the sandboxed iframe blocks
   `window.open`) with a `window.open` fallback. The web-app side
   reads the ID from the URL; a shared `rbt_session` keeps the user
-  signed in across surfaces.
+  signed in across frontends.
 
-**Before the tests:** the four `python/references/testing-*.md`
-files, plus `python/references/patterns-idempotency.md` — it
-explains `IdempotencyUncertainError`, which is otherwise the one
-runtime error whose cause is not in any reference you have read.
+**Before the tests:** `python/references/testing-project-setup.md`
+and `python/references/testing-features.md` (the built-in steps'
+spelling; always), plus `python/references/patterns-idempotency.md`
+— it explains `IdempotencyUncertainError`, which is otherwise the
+one runtime error whose cause is not in any reference you have
+read. `python/references/testing-harness.md` and
+`testing-external-context.md` are for custom steps;
 `testing-failure-recovery.md` is the one to read whenever the app
 has a spawned task, a `Workflow`, or `schedule()`d work: it covers
 restarting the app under test and asserting that work survived.
+The order of work around the feature files (agree in English, tag
+`@wip`, iterate on scenarios) is the
+[`feature` skill](../feature/SKILL.md).
 
 **Before running the app:** the [`run` skill](../run/SKILL.md).
 
@@ -464,11 +470,11 @@ subscription) is in
 [`references/react-app-tsx.md`](references/react-app-tsx.md);
 Shape C is in `python/references/state-collections.md`.
 
-## Key Framework Concepts (MCP Chat App–specific)
+## Key Framework Concepts (MCP UI–specific)
 
 ### `User` and Application Types
 
-Every AI Chat App has a `User` type and one or more application types:
+Every MCP UI has a `User` type and one or more application types:
 
 - **`User`** is the AI's front door for **creating and locating**
   application-type instances. **"Front door" means entry point +
@@ -527,10 +533,10 @@ Every method must explicitly declare its MCP exposure:
 
 The `Reader` / `Writer` / `Transaction` / `Workflow` markers come from
 `reboot.api` and behave exactly as `python`'s `api-methods.md`
-describes (each fixes the Servicer's context type). The MCP Chat App
+describes (each fixes the Servicer's context type). The MCP UI
 adds one more:
 
-- **`UI()`** — opens a React UI in the AI chat interface. Takes
+- **`UI()`** — opens a React UI inside the MCP client. Takes
   `request=` (config type or `None`), `path=` (web dir relative to
   project root), `title=`, `description=`. **No servicer
   implementation needed** — the React app _is_ the implementation.
@@ -538,12 +544,12 @@ adds one more:
   component.
 
 `factory=True` on an application type's `create` Writer is the
-chat-app spelling of a constructor (see `python`'s
+MCP UI spelling of a constructor (see `python`'s
 `servicer-constructor.md` for the underlying mechanic).
 
 ### Auth: `oauth=` Provider Selection and Real Authorizers from Day One
 
-MCP Chat Apps wire identity via `Application(oauth=...)`: what you pass
+MCP UIs wire identity via `Application(oauth=...)`: what you pass
 there stands primarily for **identity** — it determines who
 `context.auth.user_id` says the caller is, and in an MCP app that
 principal is the user. There's no middle ground: either every user
@@ -594,7 +600,7 @@ Consequences for authorizers:
 
 Backend mechanics — predicate composition, custom predicates, the
 function-vs-instance footgun — live in `python/references/auth-*.md`
-and `python/references/servicer-authorizer.md`. The chat-app delta
+and `python/references/servicer-authorizer.md`. The MCP UI delta
 is just **which mode you're in**: `oauth=` + real rules from day one.
 
 **Acting on the user's behalf at the provider.** Beyond identity,
@@ -605,7 +611,7 @@ Reboot stores the **provider's own** tokens only — with `Auth0` that's
 an Auth0 token, not the upstream Google token a brokered sign-in went
 through. The tokens are stored encrypted and read back with
 `OAuthTokenManager.ref(GOOGLE).fetch(context, user_id=context.state_id)`,
-and the outbound call goes **inside a `Workflow`**. The chat-app
+and the outbound call goes **inside a `Workflow`**. The MCP UI
 `store_tokens=True` shortcut is in
 [`references/auth-store-tokens.md`](references/auth-store-tokens.md);
 the full read-path and in-`Workflow` call recipe (shared with web apps)
@@ -625,7 +631,7 @@ is what makes that work.
 
 ### Example Prompts (Root-Page Wizard)
 
-Every MCP Chat App ships **example prompts** — short, named chat
+Every MCP UI ships **example prompts** — short, named chat
 scenarios the root-page wizard shows users so they can try the app
 the moment it boots, without having to invent a first message. They
 are not optional polish: a fresh user landing on the wizard with no
@@ -658,7 +664,7 @@ They live in `backend/src/example_prompts.py` and are passed to
 `Application(example_prompts=...)` in `main.py`. Full file shapes and
 a worked set are in
 [`references/project-shell.md`](references/project-shell.md); the
-`ai-chat-counter` example is the canonical reference.
+`mcp-ui-counter` example is the canonical reference.
 
 ## Project Structure
 
@@ -671,12 +677,16 @@ a worked set are in
 ├── api/
 │   └── <pkg>/v1/
 │       └── <name>.py        # API definition
+├── pytest.ini               # testpaths: tests; pythonpath: backend/src backend/api api
 ├── backend/
 │   └── src/
 │       ├── main.py          # Application entrypoint
 │       ├── example_prompts.py  # Wizard example prompts
 │       └── servicers/
 │           └── <name>.py    # Servicer implementation
+├── tests/
+│   ├── <capability>.feature  # One feature per capability
+│   └── <name>_test.py       # `application` fixture + `scenarios(...)`
 └── frontend/
     ├── package.json
     ├── build.mjs            # Discovers + builds every UI
@@ -739,36 +749,33 @@ a worked set are in
     [`references/react-app-tsx.md`](references/react-app-tsx.md) for
     `App.tsx` patterns.
 12. `cd frontend && npm run build`.
-13. **Write and run backend unit tests covering each user-facing
-    user story before handing the app off.** Enumerate the user
-    stories from the design — every action the user should be able
-    to _do_ through the MCP tool surface (e.g. "create a new
-    todo list", "add an item and see it listed", "rename a
-    list"). Write one test method per user story in
-    `backend/tests/<servicer>_test.py`, following the patterns
-    in `python/references/testing-project-setup.md`,
-    `python/references/testing-harness.md`, and
-    `python/references/testing-external-context.md`. Use one
-    `IsolatedAsyncioTestCase`, one external context per test
-    (`name=f"test-{self.id()}"`), and
-    `Service.ref(id).method(context, ...)` for all calls —
-    never instantiate Servicers directly. Register the **real**
-    servicers — never subclass a servicer in tests to weaken its
-    `authorizer()`. Impersonate users instead with
-    `await rbt.create_external_context_as(name, user_id)` — see
-    the impersonation pattern in `testing-harness.md`. Run
-    `cd backend && uv run pytest` and fix anything that fails.
-    Then type-check: run `uv run mypy backend/` from the project
+13. **Write and run the scenarios of every feature before handing
+    the app off.** Each feature file from the design phase (the
+    [`feature` skill](../feature/SKILL.md)) gets its scenarios now:
+    every action the user should be able to _do_ through the MCP
+    tool surface ("create a new todo list", "add an item and see it
+    listed", "rename a list") is a scenario in the built-in steps
+    of `python/references/testing-features.md`, calling the
+    methods the tools call. Every step names who calls; a user is
+    declared with `"alice" is an authenticated user`, which is how
+    the real authorizers get exercised: register the **real**
+    servicers and never subclass one to weaken its `authorizer()`.
+    Let factories make ids up. Tag what cannot pass yet `@blocked`
+    with its reason; leave `@wip` where work continues. Run
+    `uv run pytest` and fix anything that fails.
+    Then type-check: run `uv run mypy backend/ tests/` from the project
     root and fix every error (config and rationale in
     `python/references/lifecycle-project-setup.md`). Do not
-    proceed to the next step until every user-story test passes
-    and mypy is green — together they are the gate that catches
-    contract bugs before the user sees them in MCPJam.
+    proceed to the next step until every scenario passes (or is
+    `@blocked` with a reason) and mypy is green — together they
+    are what catches contract bugs before the user sees them in
+    MCPJam. Point the user at the dashboard's Features page to
+    review the features.
 14. Run the app — load the [`run` skill](../run/SKILL.md) and
     follow it. It is the single canonical "start the app"
     procedure: it detects the app type, makes sure dependencies
     and secrets are in place, and starts the backend and
-    frontend. **The handoff for a Chat App is the setup wizard,
+    frontend. **The handoff for an MCP UI is the setup wizard,
     not the `/mcp` URL.** The backend serves an interactive
     **setup wizard at its root (`http://localhost:9991`)** — the
     page that connects an MCP client (Claude, ChatGPT, MCPJam, …)
@@ -796,8 +803,8 @@ When modifying an existing app:
 6. When the change adds a new user-facing capability, add or update
    an example prompt in `backend/src/example_prompts.py` so the
    wizard surfaces the new flow.
-7. Re-verify the backend: run `uv run mypy backend/` from the
-   project root and `cd backend && uv run pytest`; fix every
+7. Re-verify the backend: run `uv run mypy backend/ tests/` from the
+   project root and `uv run pytest`; fix every
    error and failure before handing back.
 8. If the app isn't already running, bring it up with the
    [`run` skill](../run/SKILL.md). If it is already running under

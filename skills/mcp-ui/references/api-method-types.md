@@ -1,7 +1,7 @@
 ---
 title: API Definition — Method Types and Tool Exposure
 impact: CRITICAL
-impactDescription: The pydantic API file is the source of truth for both Reboot codegen AND MCP tool surface. `UI()` is chat-app-only; every method (including `User`'s) requires explicit `mcp=`; application types need `factory=True` on their `create` Writer.
+impactDescription: The pydantic API file is the source of truth for both Reboot codegen AND MCP tool surface. `UI()` is MCP-UI-only; every method (including `User`'s) requires explicit `mcp=`; application types need `factory=True` on their `create` Writer.
 tags: api, pydantic, ui, tool, mcp, reader, writer, transaction, workflow, factory, user
 ---
 
@@ -12,7 +12,7 @@ The pydantic API rules — zero-value defaults, `Optional[<Model>]` +
 `python/references/api-pydantic.md`. The marker → context type mapping is
 in `api-methods.md`.
 
-What's _MCP-Chat-App-specific_ about these files:
+What's _MCP-UI-specific_ about these files:
 
 - A `User` type with empty (or near-empty) state and `Transaction`
   methods that create application-type instances.
@@ -44,7 +44,7 @@ directly. Omitting `mcp=` raises at codegen with
 
 ## `UI()` — React Surface
 
-`UI()` opens a React UI in the AI chat interface. Takes
+`UI()` opens a React UI inside the MCP client. Takes
 `request=` (config type or `None`), `path=` (web dir relative to
 project root), `title=`, `description=`. **No servicer
 implementation needed** — the React app _is_ the implementation.
@@ -52,7 +52,7 @@ When `request=` is a `Model`, its fields become props on the
 React component.
 
 `factory=True` on an application type's `create` Writer is the
-chat-app spelling of a constructor (see `python`'s
+MCP UI spelling of a constructor (see `python`'s
 `servicer-constructor.md` for the underlying mechanic).
 
 ## UI Placement: On the Entity Type, Not on `User`
@@ -107,6 +107,7 @@ a `request=<Model>` field.
 ```python
 from reboot.api import (
     API,
+    Exclusive,
     UI,
     Field,
     Methods,
@@ -152,6 +153,7 @@ api = API(
         state=UserState,
         methods=Methods(
             create_counter=Transaction(
+                mode=Exclusive(),
                 request=None,
                 response=CreateCounterResponse,
                 description="Create a new Counter. Returns the ID of "
@@ -340,6 +342,7 @@ references — load them before writing the body.
 ```python
 from reboot.api import (
     API,
+    Exclusive,
     Field,
     Methods,
     Model,

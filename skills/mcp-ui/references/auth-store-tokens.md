@@ -12,7 +12,7 @@ Google Calendar, open GitHub issues, post to their Slack. It always has
 two halves: **capture** the service's OAuth tokens once (stored encrypted
 in an `OAuthTokenManager`), then **use** them by reading them back and
 calling the API **inside a `Workflow`**. This reference covers only the
-chat-app shortcut for the capture half.
+MCP UI shortcut for the capture half.
 
 The full, host-agnostic recipe — capturing tokens via your own OAuth
 endpoints, the read-back, the in-`Workflow` call, refresh tokens, and
@@ -20,12 +20,12 @@ token erasure — lives in the python skill:
 [`python/references/auth-external-api-calls.md`](../../python/references/auth-external-api-calls.md).
 **Read that for everything except the one shortcut below.**
 
-## The chat-app shortcut: `store_tokens=True`
+## The MCP UI shortcut: `store_tokens=True`
 
 When the API you want belongs to the **identity provider** in
 `Application(oauth=...)` (`Google` / `GitHub` / `Auth0`), the OAuth
 server captures its tokens for you — no endpoints to write. The same
-shortcut works for web apps: every surface that signs in through
+shortcut works for web apps: every frontend that signs in through
 `oauth=` captures tokens at the same `/__/oauth/callback` exchange.
 
 `scopes=` is the **extra** OAuth scopes to request on top of the base
