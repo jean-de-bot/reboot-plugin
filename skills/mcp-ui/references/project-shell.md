@@ -1,20 +1,20 @@
 ---
-title: Project Shell — Chat-App Deltas
+title: Project Shell — MCP UI Deltas
 impact: CRITICAL
 impactDescription: The shell files (`.rbtrc`, `pyproject.toml`, `.python-version`, `main.py`) wire the build, the dev server, the HMR routing, and the entry point — wrong shapes break either codegen or live reload before the app even boots.
 tags: project, shell, rbtrc, pyproject, python-version, main, application-entry, hmr, dist
 ---
 
-## Project Shell — Chat-App Deltas
+## Project Shell — MCP UI Deltas
 
 The `python` skill covers the canonical project shape
 (`lifecycle-project-setup.md`) and the `.rbtrc` format
 (`lifecycle-rbtrc.md`). That shape includes a project-root
 `.mypy.ini` and a project-root `.gitignore` (templates in
 `lifecycle-project-setup.md`) — create both when scaffolding; they
-have no chat-app delta (the base `.gitignore` already covers
+have no MCP UI delta (the base `.gitignore` already covers
 `frontend/api/`, `frontend/dist/`, and `node_modules/`). What an
-MCP Chat App adds on top:
+MCP UI adds on top:
 
 ### `.python-version`
 
@@ -89,7 +89,7 @@ serve run --tls=external
 ### `pyproject.toml`
 
 The reboot-python `lifecycle-project-setup.md` covers the base shape.
-Chat apps usually pull in a few extra runtime deps:
+MCP UIs usually pull in a few extra runtime deps:
 
 ```toml
 [project]
@@ -105,14 +105,19 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "reboot[dev]>=1.0.3",
     "mypy==1.18.1",
+    "pytest>=7.4.2",
     "types-protobuf>=4.24.0.20240129",
 ]
 ```
 
+`reboot[dev]` (same version as `reboot`) is what the tests and the
+dashboard run on; a development environment always installs it.
+
 ### `example_prompts.py`
 
-Every MCP Chat App ships a list of `ExamplePrompt`s — the
+Every MCP UI ships a list of `ExamplePrompt`s — the
 ready-to-send chat scenarios the root-page wizard offers users so
 they can try the app the moment it's running. Keep them in their own
 `backend/src/example_prompts.py` module so `main.py` stays a thin
@@ -159,7 +164,7 @@ rather than only calling tool-only methods — see "Example Prompts"
 in `SKILL.md` for the full rule. The counter set above does this
 with its "…and show me the counter" / "show me the wins counter"
 turns. See the worked set in
-`public/reboot/examples/ai-chat-counter/backend/src/example_prompts.py`.
+`public/reboot/examples/mcp-ui-counter/backend/src/example_prompts.py`.
 
 ### `main.py`
 
@@ -202,7 +207,7 @@ if __name__ == "__main__":
 
 `title` and `description` are also surfaced by the wizard, so set
 both to something human-readable (`title` defaults to the
-application name if omitted). A typical chat app has no `initialize`
+application name if omitted). A typical MCP UI has no `initialize`
 hook — the auto-constructed `User` covers per-user setup and
 application-type instances are created on demand by `User`'s
 Transaction methods.

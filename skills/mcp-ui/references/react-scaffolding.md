@@ -7,7 +7,7 @@ tags: web, react, vite, tsconfig, package-json, css, build, hmr, scaffolding, bu
 
 ## React Scaffolding — package.json, vite.config.ts, tsconfigs, index.css
 
-Everything below is MCP-Chat-App-specific. The `frontend/` tree is
+Everything below is MCP-UI-specific. The `frontend/` tree is
 owned by this skill — `python` knows nothing about it.
 
 ## `frontend/package.json`
@@ -29,8 +29,8 @@ auto-discovers and builds every UI. Don't hand-maintain per-UI
   "dependencies": {
     "@modelcontextprotocol/ext-apps": "1.5.0",
     "@modelcontextprotocol/sdk": "1.29.0",
-    "@reboot-dev/reboot-react": "1.5.0",
-    "@reboot-dev/reboot-api": "1.5.0",
+    "@reboot-dev/reboot-react": "1.6.0",
+    "@reboot-dev/reboot-api": "1.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "zod": "^4.0.0"

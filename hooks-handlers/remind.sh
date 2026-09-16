@@ -107,14 +107,24 @@ case "$event" in
         ;;
 esac
 
-reminder=$(
-    cat <<'EOF'
+# The reminder is streamed straight from its heredoc into the JSON,
+# rather than captured with `$(...)` first: bash 3.2, the `sh` on
+# macOS, scans a heredoc inside a command substitution as if it were
+# code, so an apostrophe in the prose there fails the whole script
+# to parse. JSON-encoding it takes escaping only its newlines, since
+# it contains no double quotes or backslashes by construction.
+printf '{"hookSpecificOutput":{"hookEventName":"%s"' "$event"
+printf ',"additionalContext":"'
+awk 'NR > 1 { printf "\\n" } { printf "%s", $0 }' <<'EOF'
 [reboot-plugin-reminder] Reboot guidance for this session:
 - Do not guess Reboot platform behavior (idempotency, scheduling,
 authorizers, state construction, contexts, generated APIs). Before
 coding around any Reboot behavior, read the relevant reference in the
-Reboot plugin's skills (`python`, `chat-app`, `web-app`, `run`,
-`upgrade`) and state what it says.
+Reboot plugin's skills (`python`, `feature`, `mcp-ui`, `web-app`,
+`run`, `upgrade`) and state what it says.
+- An application's behavior is specified and tested as `.feature`
+files (the `feature` skill): agree on a feature in English before
+writing its API or code, and iterate on its scenarios with the user.
 - Before hand-rolling a primitive (maps, queues, pub/sub, presence,
 encryption), check Reboot's standard library: the `stdlib-*.md`
 references in the `python` skill.
@@ -123,15 +133,4 @@ or restarts to discover how Reboot behaves. After two failed attempts
 at the same goal, stop, read the relevant skill reference, and explain
 the constraint before trying again.
 EOF
-)
-
-# JSON-encode the reminder: it contains no double quotes or
-# backslashes by construction, so only its newlines need escaping.
-escaped=$(
-    printf '%s' "$reminder" \
-        | awk 'NR > 1 { printf "\\n" } { printf "%s", $0 }'
-)
-
-output='{"hookSpecificOutput":{"hookEventName":"'"$event"'"'
-output="$output,\"additionalContext\":\"$escaped\"}}"
-printf '%s\n' "$output"
+printf '"}}\n'

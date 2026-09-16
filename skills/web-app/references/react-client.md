@@ -8,7 +8,7 @@ tags: web-app, react, vite, hooks, errors, RebootClientProvider
 ## Wire the Web SPA to the Reboot Backend
 
 Everything the standalone browser frontend needs. This is the
-web-app equivalent of the chat-app's scaffolding references —
+web-app equivalent of the `mcp-ui` skill's scaffolding references —
 **do not read those**: their Vite config, nested
 `frontend/mcp/<name>/index.html` output, and `UI()` machinery are
 MCP-host-specific and do not apply to a web app.
@@ -110,7 +110,7 @@ when the backend serves the built assets from one origin.
 ## The Generated Client
 
 The hook, mutator, and error declarations `rbt generate --react=`
-emits are identical for every surface, so they live in one place:
+emits are identical for every frontend, so they live in one place:
 [`python/references/react-generated-client.md`](../../python/references/react-generated-client.md).
 Read it before writing components — it has the `useFoo` overloads,
 `UseFooApi`, the three-field reader return, `ResponseOrAborted`, the
@@ -153,6 +153,52 @@ export function friendlyError(aborted: {
 The fields on each error case are exactly the fields declared on
 the pydantic error model in the API definition, camelCased. The
 frontend only _reports_; the backend already refused the operation.
+
+## Accessible Markup, So Scenarios Can Drive the Page
+
+The web app scenarios (`python/references/testing-web-app.md`)
+find elements the way a person, or a screen reader, does: a button
+by what it says, a field by its label, a table by its heading. They
+never take a selector, so the page has to expose an accessibility
+tree. Build every page this way from the start, not when the first
+scenario fails to find something:
+
+```tsx
+// A field's label is paired with it: `htmlFor` names the input's
+// `id`. `fills "Amount ($)" in the web app with `250`` finds it
+// through that pairing; a placeholder does not count.
+<label htmlFor="amount">Amount ($)</label>
+<input id="amount" type="number" value={amount} onChange={...} />
+
+// A select is a `<select>` with a paired label, its options saying
+// what a person would pick (here the account id).
+<label htmlFor="from-account">From Account</label>
+<select id="from-account" value={from} onChange={...}>
+  {accounts.map((a) => <option key={a.id} value={a.id}>{a.id}</option>)}
+</select>
+
+// A button says what it does. `clicks the "Open Account" button`
+// matches that text exactly; an icon-only button gets `aria-label`.
+<button onClick={open}>Open Account</button>
+<button aria-label="Delete" onClick={remove}><TrashIcon /></button>
+
+// A table a scenario names has a labelled heading (or a
+// `<caption>`). `sees "$1000" in the "Your Accounts" table` looks
+// only inside it.
+<h2 id="your-accounts">Your Accounts</h2>
+<table aria-labelledby="your-accounts">...</table>
+
+// A value a scenario reads back (an id the backend made up)
+// carries `data-testid`, on the element whose text is exactly the
+// value. This is the only place a test id belongs.
+<td data-testid="account-id">{account.id}</td>
+```
+
+The roles a scenario may name are `button`, `link`, `tab`,
+`checkbox`, `radio`, `menuitem`, `option`, `row`, and `table`; use
+the native element for each (`<button>`, `<a href>`, `<input type="checkbox">`) rather than a `<div onClick>`, which has no role.
+Text that changes on a backend event (a balance, a status) is
+rendered as text, so `eventually sees "$1000"` can wait for it.
 
 ## Sign-in and Sign-out
 

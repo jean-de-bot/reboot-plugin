@@ -199,7 +199,9 @@ class UserServicer(User.Servicer):
     async def create(self, context: WriterContext) -> None:
         if context.constructor:
             # Just allocate the ID — the OrderedMap is constructed
-            # implicitly on the first `insert`.
+            # implicitly on the first `insert`. Until then, reading it
+            # aborts with `StateNotConstructed`; see
+            # `stdlib-ordered-map.md`.
             self.state.people_index_id = str(uuid4())
 
     async def add_person(
@@ -381,6 +383,6 @@ form runs:
   collection items.
 - `stdlib-ordered-map.md` — concrete API for Shape C, library
   registration, pagination details.
-- `chat-app/references/api-state-shapes.md` (chat-app skill) — the
-  chat-app-specific corollary: `list[Item]` is for sub-records,
+- `mcp-ui/references/api-state-shapes.md` (`mcp-ui` skill) — the
+  MCP-UI-specific corollary: `list[Item]` is for sub-records,
   not for application-type instances.
