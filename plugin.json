@@ -1,22 +1,4 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "reboot",
-  "version": "1.6.0",
-  "description": "Build Reboot apps with skills for routing, specification, scaffolding, running, deployment, inspection, and upgrades.",
-  "author": {
-    "name": "Reboot",
-    "email": "team@reboot.dev",
-    "url": "https://reboot.dev"
-  },
-  "homepage": "https://reboot.dev",
-  "repository": "https://github.com/reboot-dev/reboot-plugin",
-  "license": "Apache-2.0",
-  "keywords": [
-    "reboot",
-    "mcp",
-    "mcp-ui",
-    "web-app",
-    "python",
-    "agents"
-  ]
+  "name": "reboot"
 }
