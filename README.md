@@ -119,8 +119,9 @@ full install).
 
 ### Hermes Agent
 
-Hermes reads the portable Agent Plugins v1 manifest at the repository root and
-registers the bundled skills under the `reboot:` namespace. Install it with:
+Hermes supports the portable [Agent Plugins v1 specification](https://agent-plugins.org/specification)
+and reads the root-level [plugin manifest](https://agent-plugins.org/plugin-authors/manifest).
+It registers the bundled skills under the `reboot:` namespace. Install it with:
 
 ```bash
 hermes plugins install reboot-dev/reboot-plugin --enable
